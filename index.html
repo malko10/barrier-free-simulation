@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html class="dark" lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>BARRIER-FREE | 장벽 없는 세상</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Noto+Sans+KR:wght@300;400;500;700;900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Noto+Sans+KR:wght@100..900&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "surface": "#17130a",
+                "surface-tint": "#f8bd2a",
+                "surface-container-low": "#201b12",
+                "secondary-container": "#03b5d3",
+                "on-background": "#ece1d2",
+                "on-primary-fixed": "#261a00",
+                "on-tertiary-container": "#aa0a1b",
+                "on-secondary-container": "#00424e",
+                "inverse-primary": "#795900",
+                "on-primary-container": "#6c5000",
+                "surface-variant": "#3a3429",
+                "on-error-container": "#ffdad6",
+                "on-secondary-fixed-variant": "#004e5c",
+                "tertiary-fixed-dim": "#ffb3ad",
+                "primary-fixed-dim": "#f8bd2a",
+                "surface-container": "#241f15",
+                "on-surface-variant": "#d3c5ad",
+                "on-tertiary-fixed": "#410004",
+                "inverse-surface": "#ece1d2",
+                "on-primary": "#402d00",
+                "error": "#ffb4ab",
+                "inverse-on-surface": "#353025",
+                "on-tertiary-fixed-variant": "#930013",
+                "on-secondary-fixed": "#001f26",
+                "primary": "#ffe2aa",
+                "surface-dim": "#17130a",
+                "secondary-fixed": "#acedff",
+                "tertiary-container": "#ffb7b1",
+                "on-primary-fixed-variant": "#5c4300",
+                "on-secondary": "#003640",
+                "secondary-fixed-dim": "#4cd7f6",
+                "tertiary-fixed": "#ffdad7",
+                "on-surface": "#ece1d2",
+                "surface-bright": "#3e382e",
+                "tertiary": "#ffdeda",
+                "outline-variant": "#4f4633",
+                "surface-container-high": "#2f291f",
+                "background": "#17130a",
+                "primary-container": "#fbc02d",
+                "error-container": "#93000a",
+                "on-tertiary": "#68000a",
+                "primary-fixed": "#ffdfa0",
+                "surface-container-highest": "#3a3429",
+                "outline": "#9c8f79",
+                "surface-container-lowest": "#120e06",
+                "on-error": "#690005",
+                "secondary": "#4cd7f6"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "stack-sm": "8px",
+                "stack-md": "16px",
+                "stack-lg": "32px",
+                "unit": "4px",
+                "margin-mobile": "16px",
+                "container-max": "1280px",
+                "section-gap": "80px",
+                "gutter": "24px"
+            },
+            "fontFamily": {
+                "display-lg": ["Inter", "Noto Sans KR"],
+                "body-md": ["Noto Sans KR"],
+                "body-lg": ["Noto Sans KR"],
+                "headline-md": ["Inter", "Noto Sans KR"],
+                "kbd-text": ["Inter"],
+                "label-caps": ["Inter"]
+            },
+            "fontSize": {
+                "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                "kbd-text": ["14px", {"lineHeight": "1", "fontWeight": "500"}],
+                "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        body {
+            background-color: #17130a;
+            color: #ece1d2;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .glass {
+            background: rgba(36, 31, 21, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pulse-glow {
+            animation: pulse-animation 2s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% { box-shadow: 0 0 0 0px rgba(248, 189, 42, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(248, 189, 42, 0); }
+            100% { box-shadow: 0 0 0 0px rgba(248, 189, 42, 0); }
+        }
+
+        .monitor-reflection::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 50%);
+            pointer-events: none;
+        }
+
+        kbd {
+            background: #241f15;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 3px solid rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 8px 12px;
+            min-width: 40px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        .gradient-text {
+            background: linear-gradient(to bottom right, #ffe2aa, #f8bd2a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md">
+    <!-- TopAppBar -->
+    <header class="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-xl border-b border-white/10 shadow-[0_0_20px_rgba(248,189,42,0.1)]">
+        <div class="flex justify-between items-center px-margin-mobile md:px-gutter max-w-container-max mx-auto h-20">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">visibility</span>
+                <span class="font-display-lg text-display-lg tracking-tighter text-primary">BARRIER-FREE</span>
+            </div>
+            <nav class="hidden md:flex items-center gap-8 font-headline-md text-headline-md">
+                <a class="text-primary border-b-2 border-primary pb-1" href="#intro">소개</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors" href="#guide">가이드</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors" href="#campaign">캠페인</a>
+            </nav>
+            <div class="md:hidden">
+                <span class="material-symbols-outlined text-on-surface cursor-pointer">menu</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-20">
+        <!-- Hero Section -->
+        <section class="relative min-h-[90vh] flex flex-col items-center justify-center text-center px-margin-mobile overflow-hidden" id="intro">
+            <div class="relative z-10 max-w-4xl animate-in fade-in slide-in-from-bottom-10 duration-1000">
+                <span class="inline-block px-4 py-1 rounded-full border border-primary/30 text-primary font-label-caps text-label-caps mb-6 bg-primary/5">3D IMPRESSIVE SIMULATION</span>
+                <h1 class="font-display-lg text-display-lg md:text-6xl mb-8 gradient-text leading-tight">
+                    빛을 잃은 보도 위,<br/>노란 선을 따라 걷다
+                </h1>
+                <p class="text-on-surface-variant font-body-lg text-body-lg mb-12 max-w-2xl mx-auto opacity-80">
+                    인도 위 무단 점유된 불법 주정차 차량과 파손된 점자 블록.<br/>
+                    누군가에게는 평범한 길이, 누군가에게는 목숨을 건 도전이 됩니다.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a class="group relative bg-primary-container text-on-primary-fixed px-10 py-5 rounded-full font-headline-md text-headline-md pulse-glow transition-transform active:scale-95" href="#simulation">
+                        체험하기
+                    </a>
+                    <button class="px-10 py-5 rounded-full border border-white/20 hover:bg-white/5 transition-colors font-headline-md text-headline-md" onclick="document.getElementById('simulation').scrollIntoView({behavior: 'smooth'})">
+                        캠페인 체험 구역으로 이동
+                    </button>
+                </div>
+            </div>
+            <!-- Floating Braille Icon Background Decoration -->
+            <div class="absolute bottom-20 left-1/2 -translate-x-1/2 opacity-20 pointer-events-none">
+                <span class="material-symbols-outlined text-9xl">apps</span>
+            </div>
+        </section>
+
+        <!-- Simulation Monitor Frame -->
+        <section class="py-section-gap px-margin-mobile md:px-gutter max-w-container-max mx-auto" id="simulation">
+            <div class="text-center mb-16">
+                <h2 class="font-display-lg text-display-lg mb-4">직접 마주하는 불편</h2>
+                <div class="w-24 h-1 bg-primary mx-auto rounded-full"></div>
+            </div>
+            <div class="relative group">
+                <div class="monitor-frame glass rounded-2xl border-4 border-white/5 shadow-2xl overflow-hidden aspect-video relative monitor-reflection" id="iframe-container">
+                    <div class="absolute inset-0 bg-surface-container-low flex items-center justify-center">
+                        <div class="w-full h-full bg-zinc-900 flex items-center justify-center relative">
+                            <img id="placeholder-img" class="w-full h-full object-cover opacity-50" data-alt="3D simulation street view" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVElXz0w_EqekubbYbELq75QvS6-Dh7Kakrs8SQAXd9fP9w5GicTkym_UeC_JaLh4jB1JgMA-NFAImHbYhDV5ydtyWgVns076oBg7hn9i5v3e9GCtheHpywH0iptQQRQJZJlmjPeqCQTJPoaWsItApu4BBEpUsz4smwu7hVwOaIUk8KiOpGG2xBIQp_9yPWmcNZ8VTZ8cQrEJaH9vjOFZ49d_xuqgvdWOrXTfIRApo2HSzsTRAG8qe"/>
+                            <div id="play-overlay" class="absolute inset-0 flex flex-col items-center justify-center cursor-pointer group-hover:bg-black/40 transition-colors z-20">
+                                <span class="material-symbols-outlined text-7xl text-primary mb-4">play_circle</span>
+                                <p class="text-primary font-headline-md text-headline-md bg-surface/80 px-6 py-2 rounded-lg backdrop-blur-md text-center">
+                                    화면을 클릭하여 체험을 시작하세요
+                                </p>
+                            </div>
+                            <iframe id="game-iframe" src="" allow="pointer-lock" class="absolute inset-0 w-full h-full border-none hidden z-10"></iframe>
+                        </div>
+                    </div>
+                </div>
+                <!-- Controls Quick Help Overlay -->
+                <div class="absolute top-6 left-6 flex gap-2">
+                    <div class="bg-black/60 backdrop-blur-md border border-white/10 rounded-lg px-3 py-1 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-secondary">wifi_tethering</span>
+                        <span class="text-xs font-label-caps">FPS MODE ACTIVE</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gameplay Guide Grid -->
+        <section class="py-section-gap bg-surface-container-lowest/50" id="guide">
+            <div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+                    <div>
+                        <h2 class="font-display-lg text-display-lg mb-8 leading-tight">시각을 넘어선<br/>감각의 조작</h2>
+                        <p class="text-on-surface-variant font-body-lg text-body-lg mb-12">
+                            시각 정보가 제한된 환경에서 청각과 촉각 정보만을 사용하여 목적지까지 이동하십시오. 점자 블록이 제공하는 감각 피드백을 신뢰해야 합니다.
+                        </p>
+                        <div class="space-y-8">
+                            <div class="flex items-center gap-6">
+                                <div class="flex gap-1">
+                                    <kbd>W</kbd>
+                                    <div class="flex flex-col gap-1">
+                                        <div class="flex gap-1">
+                                            <kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="font-headline-md text-headline-md text-on-surface">이동 (Movement)</h4>
+                                    <p class="text-on-surface-variant text-sm">한 걸음씩 조심스럽게 전진합니다.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-6">
+                                <div class="flex gap-1">
+                                    <kbd class="px-8">Mouse</kbd>
+                                </div>
+                                <div>
+                                    <h4 class="font-headline-md text-headline-md text-on-surface">시선 전환 (Rotation)</h4>
+                                    <p class="text-on-surface-variant text-sm">주변의 소리와 흐릿한 형체를 살핍니다.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-6">
+                                <div class="flex gap-1">
+                                    <kbd>E</kbd>
+                                </div>
+                                <div>
+                                    <h4 class="font-headline-md text-headline-md text-on-surface">상호작용 (Interaction)</h4>
+                                    <p class="text-on-surface-variant text-sm">신호기 근처에서 기둥 음성 안내 버튼 작동.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="glass p-8 rounded-2xl border-l-4 border-primary shadow-xl">
+                            <div class="flex items-center gap-4 mb-4">
+                                <span class="material-symbols-outlined text-primary text-3xl">grid_view</span>
+                                <h3 class="font-headline-md text-headline-md">점자 블록 감지</h3>
+                            </div>
+                            <p class="text-on-surface-variant text-sm leading-relaxed">
+                                노란 블록 위에 올라설 때 지팡이에서 울리는 진동과 사운드에 집중하세요. 정지 블록(점형)과 유도 블록(선형)을 구분해야 합니다.
+                            </p>
+                        </div>
+                        <div class="glass p-8 rounded-2xl border-l-4 border-error shadow-xl">
+                            <div class="flex items-center gap-4 mb-4">
+                                <span class="material-symbols-outlined text-error text-3xl">warning</span>
+                                <h3 class="font-headline-md text-headline-md">위험 요소 (Game Over)</h3>
+                            </div>
+                            <p class="text-on-surface-variant text-sm leading-relaxed">
+                                불법 주차 차량과 3회 충돌하거나 적색 신호에 도로(차도)로 진입할 경우 게임 오버됩니다. 안전 보행을 위협하는 장벽을 느껴보세요.
+                            </p>
+                        </div>
+                        <div class="glass p-8 rounded-2xl border-l-4 border-secondary shadow-xl md:col-span-2">
+                            <div class="flex items-center gap-4 mb-4">
+                                <span class="material-symbols-outlined text-secondary text-3xl">volume_up</span>
+                                <h3 class="font-headline-md text-headline-md">서라운드 오디오 시스템</h3>
+                            </div>
+                            <p class="text-on-surface-variant text-sm leading-relaxed">
+                                3D 공간 음향을 통해 다가오는 차량의 위치와 횡단보도의 음향 신호기 소리를 파악하십시오. 헤드셋 사용을 강력히 권장합니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Grid -->
+        <section class="py-section-gap px-margin-mobile md:px-gutter max-w-container-max mx-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Feature 1 -->
+                <div class="glass p-10 rounded-2xl flex flex-col gap-6 hover:-translate-y-2 transition-all duration-300 group">
+                    <div class="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                        <span class="material-symbols-outlined text-4xl text-primary">view_in_ar</span>
+                    </div>
+                    <div>
+                        <h3 class="font-headline-md text-headline-md mb-3">3D 몰입형 보행 환경</h3>
+                        <p class="text-on-surface-variant text-sm">Three.js 기반의 사실적인 도시 재현으로 실제 보도 환경과 도로를 경험합니다.</p>
+                    </div>
+                </div>
+                <!-- Feature 2 -->
+                <div class="glass p-10 rounded-2xl flex flex-col gap-6 hover:-translate-y-2 transition-all duration-300 group">
+                    <div class="w-16 h-16 rounded-xl bg-secondary/10 flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
+                        <span class="material-symbols-outlined text-4xl text-secondary">visibility_off</span>
+                    </div>
+                    <div>
+                        <h3 class="font-headline-md text-headline-md mb-3">시각 제한 페이딩</h3>
+                        <p class="text-on-surface-variant text-sm">점자블록 이탈 또는 유실 구간 보행 시 99.9% 암전 효과로 시각 장애의 보행을 체감합니다.</p>
+                    </div>
+                </div>
+                <!-- Feature 3 -->
+                <div class="glass p-10 rounded-2xl flex flex-col gap-6 hover:-translate-y-2 transition-all duration-300 group">
+                    <div class="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                        <span class="material-symbols-outlined text-4xl text-primary">hearing</span>
+                    </div>
+                    <div>
+                        <h3 class="font-headline-md text-headline-md mb-3">오디오 가이던스</h3>
+                        <p class="text-on-surface-variant text-sm">신호 상태(적색/청색) 안내 음향 시스템과 안내 방송이 결합된 음향 유도시스템 탑재.</p>
+                    </div>
+                </div>
+                <!-- Feature 4 -->
+                <div class="glass p-10 rounded-2xl flex flex-col gap-6 hover:-translate-y-2 transition-all duration-300 group">
+                    <div class="w-16 h-16 rounded-xl bg-tertiary-container/10 flex items-center justify-center group-hover:bg-tertiary-container/20 transition-colors">
+                        <span class="material-symbols-outlined text-4xl text-tertiary-container">touch_app</span>
+                    </div>
+                    <div>
+                        <h3 class="font-headline-md text-headline-md mb-3">지팡이 촉각 사운드</h3>
+                        <p class="text-on-surface-variant text-sm">지표면 재질(점자블록, 인도 블록, 깨진 타일, 아스팔트)에 따라 달라지는 지팡이 타격음 구현.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Campaign Section -->
+        <section class="relative py-32 overflow-hidden" id="campaign">
+            <div class="relative z-10 max-w-5xl mx-auto px-margin-mobile text-center">
+                <div class="mb-12">
+                    <span class="material-symbols-outlined text-error text-6xl mb-6">report</span>
+                    <h2 class="font-display-lg text-display-lg md:text-5xl mb-12 leading-tight">
+                        인도 위 불법 주정차,<br/>누군가에게는 보이지 않는 벽입니다.
+                    </h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="glass p-12 rounded-3xl">
+                        <div class="text-4xl font-extrabold text-primary mb-2">91%</div>
+                        <p class="text-on-surface-variant text-sm">장애인 중 절반 이상이 보행 중 사고 위험을 매일 느낍니다.</p>
+                    </div>
+                    <div class="glass p-12 rounded-3xl">
+                        <div class="text-4xl font-extrabold text-error mb-2">1.5m</div>
+                        <p class="text-on-surface-variant text-sm">최소한의 이동 폭조차 확보되지 않는 보행 환경의 현실.</p>
+                    </div>
+                    <div class="glass p-12 rounded-3xl">
+                        <div class="text-4xl font-extrabold text-secondary mb-2">#0</div>
+                        <p class="text-on-surface-variant text-sm">우리가 추구해야 할 장벽 없는 세상의 목표치입니다.</p>
+                    </div>
+                </div>
+                <div class="mt-20">
+                    <button class="bg-surface p-8 rounded-2xl glass border border-white/20 inline-flex flex-col items-center gap-4 hover:border-primary/50 transition-all duration-500">
+                        <p class="text-on-surface font-headline-md text-headline-md">캠페인 서명 참여하기</p>
+                        <div class="flex -space-x-4">
+                            <!-- Placeholder Profile Avatars -->
+                            <div class="w-12 h-12 rounded-full border-2 border-surface bg-zinc-700"></div>
+                            <div class="w-12 h-12 rounded-full border-2 border-surface bg-zinc-600"></div>
+                            <div class="w-12 h-12 rounded-full border-2 border-surface bg-zinc-500"></div>
+                            <div class="w-12 h-12 rounded-full border-2 border-surface bg-primary flex items-center justify-center text-on-primary font-bold text-xs">+1.2k</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full bg-surface-container-lowest border-t border-white/5">
+        <div class="flex flex-col md:flex-row justify-between items-center py-stack-lg px-margin-mobile md:px-gutter max-w-container-max mx-auto gap-8">
+            <div class="flex flex-col items-center md:items-start gap-4">
+                <div class="font-label-caps text-label-caps text-on-surface-variant flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">visibility</span>
+                    BARRIER-FREE CAMPAIGN
+                </div>
+                <p class="text-on-surface-variant opacity-60 text-sm">© 2026 Barrier-Free Campaign. All rights reserved.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-8 font-body-md text-body-md">
+                <a class="text-on-surface-variant hover:text-primary transition-colors" href="#intro">Intro</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors" href="#guide">Guide</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors" href="#campaign">Campaign</a>
+            </div>
+            <div class="flex gap-4">
+                <button class="w-10 h-10 rounded-full glass flex items-center justify-center text-on-surface hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-xl">share</span>
+                </button>
+                <button class="w-10 h-10 rounded-full glass flex items-center justify-center text-on-surface hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-xl">forum</span>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add subtle intersection observer for fade-in elements
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in', 'fade-in', 'duration-700');
+                    if (entry.target.classList.contains('glass')) {
+                        entry.target.classList.add('slide-in-from-bottom-5');
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.glass').forEach(el => observer.observe(el));
+
+        // Interactive dynamic iframe loading to avoid sound blocking on load
+        const playOverlay = document.getElementById('play-overlay');
+        const gameIframe = document.getElementById('game-iframe');
+        const placeholderImg = document.getElementById('placeholder-img');
+        
+        playOverlay.addEventListener('click', () => {
+            playOverlay.style.display = 'none';
+            if (placeholderImg) placeholderImg.style.display = 'none';
+            gameIframe.src = 'game.html';
+            gameIframe.classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
