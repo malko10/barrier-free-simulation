@@ -70,6 +70,31 @@
       white-space: nowrap;
     }
 
+    #collisionNotice {
+      position: fixed;
+      left: 50%;
+      top: 92px;
+      transform: translateX(-50%) scale(0.96);
+      padding: 16px 24px;
+      border: 2px solid rgba(255, 255, 255, 0.72);
+      border-radius: 8px;
+      background: rgba(190, 28, 28, 0.94);
+      color: #fff;
+      font-size: 24px;
+      font-weight: 800;
+      opacity: 0;
+      transition: opacity 120ms linear, transform 120ms linear;
+      z-index: 6;
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.34);
+    }
+
+    #collisionNotice.active {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+
     #crosshair {
       position: fixed;
       left: 50%;
@@ -177,6 +202,7 @@
     <div id="goalText">목표: 목적지까지 이동</div>
   </div>
   <div id="warning">전방에 불법 주정차 차량이 있습니다.</div>
+  <div id="collisionNotice">차량과 충돌했습니다</div>
   <div id="crosshair"></div>
   <div id="darkness"></div>
   <div id="gameOver">
@@ -223,6 +249,7 @@
     const hudButton = document.getElementById("buttonText");
     const hudGoal = document.getElementById("goalText");
     const warning = document.getElementById("warning");
+    const collisionNotice = document.getElementById("collisionNotice");
     const darkness = document.getElementById("darkness");
     const start = document.getElementById("start");
     const gameOverPanel = document.getElementById("gameOver");
@@ -239,6 +266,9 @@
     let signalColorTimer = 0;
     let frozenUntil = 0;
     let warningTimer = 0;
+    let collisionNoticeTimer = 0;
+    let stepTimer = 0;
+    let audioContext = null;
     let spawnTimer = 5;
     let gameOver = false;
     let gameClear = false;
@@ -409,6 +439,64 @@
       addBrokenTile(7.05, -51);
     }
 
+    function ensureAudioContext() {
+      if (!audioContext) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return null;
+        audioContext = new AudioContextClass();
+      }
+      if (audioContext.state === "suspended") {
+        audioContext.resume();
+      }
+      return audioContext;
+    }
+
+    function playTone({ frequency, duration, type = "sine", gain = 0.12, detune = 0, start = 0 }) {
+      const ctx = ensureAudioContext();
+      if (!ctx) return;
+      const oscillator = ctx.createOscillator();
+      const envelope = ctx.createGain();
+      const t = ctx.currentTime + start;
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(frequency, t);
+      oscillator.detune.setValueAtTime(detune, t);
+      envelope.gain.setValueAtTime(0.0001, t);
+      envelope.gain.exponentialRampToValueAtTime(gain, t + 0.012);
+      envelope.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+      oscillator.connect(envelope);
+      envelope.connect(ctx.destination);
+      oscillator.start(t);
+      oscillator.stop(t + duration + 0.03);
+    }
+
+    function playStepSound(onTactile) {
+      if (onTactile) {
+        playTone({ frequency: 1180, duration: 0.055, type: "square", gain: 0.055 });
+        playTone({ frequency: 720, duration: 0.07, type: "triangle", gain: 0.045, start: 0.035 });
+      } else {
+        playTone({ frequency: 145, duration: 0.09, type: "triangle", gain: 0.08 });
+        playTone({ frequency: 95, duration: 0.11, type: "sine", gain: 0.045, start: 0.025 });
+      }
+    }
+
+    function playCollisionSound() {
+      playTone({ frequency: 72, duration: 0.28, type: "sawtooth", gain: 0.2 });
+      playTone({ frequency: 48, duration: 0.36, type: "square", gain: 0.12, detune: -20 });
+      playTone({ frequency: 520, duration: 0.11, type: "triangle", gain: 0.08, start: 0.03 });
+    }
+
+    function updateMovementAudio(dt, isMoving) {
+      if (!isMoving || gameOver || gameClear) {
+        stepTimer = 0;
+        return;
+      }
+      stepTimer -= dt;
+      if (stepTimer <= 0) {
+        playStepSound(onTactilePath(camera.position));
+        stepTimer = keys.ShiftLeft || keys.ShiftRight ? 0.28 : 0.42;
+      }
+    }
+
     function addTrafficLight(x, z, facing) {
       const group = new THREE.Group();
       group.position.set(x, 0, z);
@@ -483,9 +571,9 @@
         }
       });
 
-      addBlockerBuilding("차단 건물 1", -9.0, 38, -1);
-      addBlockerBuilding("차단 건물 2", 9.0, 8, 1);
-      addBlockerBuilding("차단 건물 3", -9.0, -32, -1);
+      addBlockerBuilding("차단 건물 1", -13.4, 38, -1);
+      addBlockerBuilding("차단 건물 2", 13.4, 8, 1);
+      addBlockerBuilding("차단 건물 3", -13.4, -32, -1);
 
       for (let side of [-1, 1]) {
         for (let z = -63; z <= 63; z += 14) {
@@ -736,6 +824,11 @@
       warningTimer = Math.max(warningTimer, seconds);
     }
 
+    function showCollisionNotice(seconds = 1.4) {
+      collisionNotice.classList.add("active");
+      collisionNoticeTimer = Math.max(collisionNoticeTimer, seconds);
+    }
+
     function updateCars(dt, now) {
       if (gameOver || gameClear) return;
       spawnTimer -= dt;
@@ -755,6 +848,8 @@
           frozenUntil = now + 3;
           car.userData.hitCooldown = 4;
           collisionCount += 1;
+          playCollisionSound();
+          showCollisionNotice();
           if (collisionCount >= 3) {
             triggerGameOver("불법 주정차 차량에 3번 이상 부딪혔습니다.");
           } else {
@@ -769,7 +864,10 @@
 
     function movePlayer(dt, now) {
       if (gameOver || gameClear) return;
-      if (now < frozenUntil) return;
+      if (now < frozenUntil) {
+        updateMovementAudio(dt, false);
+        return;
+      }
 
       const speed = keys.ShiftLeft || keys.ShiftRight ? 5.2 : 3.25;
       const forward = new THREE.Vector3();
@@ -784,6 +882,7 @@
       if (keys.KeyD) delta.add(right);
       if (keys.KeyA) delta.sub(right);
 
+      let moved = false;
       if (delta.lengthSq() > 0) {
         delta.normalize().multiplyScalar(speed * dt);
         const nextPosition = camera.position.clone().add(delta);
@@ -797,9 +896,11 @@
         );
         if (!blocked) {
           camera.position.copy(nextPosition);
+          moved = true;
         }
         camera.position.y = 1.6;
       }
+      updateMovementAudio(dt, moved);
     }
 
     function updateCameraRotation() {
@@ -834,6 +935,11 @@
         if (warningTimer <= 0) warning.style.opacity = 0;
       }
 
+      if (collisionNoticeTimer > 0) {
+        collisionNoticeTimer -= dt;
+        if (collisionNoticeTimer <= 0) collisionNotice.classList.remove("active");
+      }
+
       const buttonNear = buttons.some(button => button.getWorldPosition(new THREE.Vector3()).distanceTo(camera.position) < 3.2);
       if (buttonNear && !showSignalColors) {
         hudButton.textContent = "버튼: 조준 후 클릭 또는 E";
@@ -862,6 +968,7 @@
     });
 
     document.addEventListener("keydown", event => {
+      ensureAudioContext();
       keys[event.code] = true;
       if (event.code === "KeyE") tryButtonInteraction();
     });
@@ -879,6 +986,7 @@
     });
 
     document.addEventListener("click", () => {
+      ensureAudioContext();
       if (gameOver || gameClear) return;
       if (document.pointerLockElement !== renderer.domElement) {
         renderer.domElement.requestPointerLock();
@@ -888,6 +996,7 @@
     });
 
     start.addEventListener("click", () => {
+      ensureAudioContext();
       renderer.domElement.requestPointerLock();
     });
 
