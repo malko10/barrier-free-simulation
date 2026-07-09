@@ -1,465 +1,904 @@
-<!DOCTYPE html>
-<html class="dark" lang="ko">
+<!doctype html>
+<html lang="ko">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>BARRIER-FREE | 장벽 없는 세상</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Noto+Sans+KR:wght@300;400;500;700;900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Noto+Sans+KR:wght@100..900&amp;display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                "surface": "#17130a",
-                "surface-tint": "#f8bd2a",
-                "surface-container-low": "#201b12",
-                "secondary-container": "#03b5d3",
-                "on-background": "#ece1d2",
-                "on-primary-fixed": "#261a00",
-                "on-tertiary-container": "#aa0a1b",
-                "on-secondary-container": "#00424e",
-                "inverse-primary": "#795900",
-                "on-primary-container": "#6c5000",
-                "surface-variant": "#3a3429",
-                "on-error-container": "#ffdad6",
-                "on-secondary-fixed-variant": "#004e5c",
-                "tertiary-fixed-dim": "#ffb3ad",
-                "primary-fixed-dim": "#f8bd2a",
-                "surface-container": "#241f15",
-                "on-surface-variant": "#d3c5ad",
-                "on-tertiary-fixed": "#410004",
-                "inverse-surface": "#ece1d2",
-                "on-primary": "#402d00",
-                "error": "#ffb4ab",
-                "inverse-on-surface": "#353025",
-                "on-tertiary-fixed-variant": "#930013",
-                "on-secondary-fixed": "#001f26",
-                "primary": "#ffe2aa",
-                "surface-dim": "#17130a",
-                "secondary-fixed": "#acedff",
-                "tertiary-container": "#ffb7b1",
-                "on-primary-fixed-variant": "#5c4300",
-                "on-secondary": "#003640",
-                "secondary-fixed-dim": "#4cd7f6",
-                "tertiary-fixed": "#ffdad7",
-                "on-surface": "#ece1d2",
-                "surface-bright": "#3e382e",
-                "tertiary": "#ffdeda",
-                "outline-variant": "#4f4633",
-                "surface-container-high": "#2f291f",
-                "background": "#17130a",
-                "primary-container": "#fbc02d",
-                "error-container": "#93000a",
-                "on-tertiary": "#68000a",
-                "primary-fixed": "#ffdfa0",
-                "surface-container-highest": "#3a3429",
-                "outline": "#9c8f79",
-                "surface-container-lowest": "#120e06",
-                "on-error": "#690005",
-                "secondary": "#4cd7f6"
-            },
-            "borderRadius": {
-                "DEFAULT": "0.25rem",
-                "lg": "0.5rem",
-                "xl": "0.75rem",
-                "full": "9999px"
-            },
-            "spacing": {
-                "stack-sm": "8px",
-                "stack-md": "16px",
-                "stack-lg": "32px",
-                "unit": "4px",
-                "margin-mobile": "16px",
-                "container-max": "1280px",
-                "section-gap": "80px",
-                "gutter": "24px"
-            },
-            "fontFamily": {
-                "display-lg": ["Inter", "Noto Sans KR"],
-                "body-md": ["Noto Sans KR"],
-                "body-lg": ["Noto Sans KR"],
-                "headline-md": ["Inter", "Noto Sans KR"],
-                "kbd-text": ["Inter"],
-                "label-caps": ["Inter"]
-            },
-            "fontSize": {
-                "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
-                "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
-                "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
-                "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
-                "kbd-text": ["14px", {"lineHeight": "1", "fontWeight": "500"}],
-                "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}]
-            }
-          }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>점자블록 보행 3D 장면</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: Arial, "Malgun Gothic", sans-serif;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    #start {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: rgba(12, 14, 18, 0.78);
+      color: #fff;
+      z-index: 10;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    #start strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 26px;
+      letter-spacing: 0;
+    }
+
+    #hud {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      min-width: 230px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 14px;
+      line-height: 1.55;
+      z-index: 4;
+      user-select: none;
+    }
+
+    #warning {
+      position: fixed;
+      left: 50%;
+      bottom: 72px;
+      transform: translateX(-50%);
+      padding: 11px 16px;
+      border-radius: 8px;
+      background: rgba(175, 38, 38, 0.92);
+      color: #fff;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 150ms linear;
+      z-index: 5;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    #crosshair {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: 14px;
+      height: 14px;
+      transform: translate(-50%, -50%);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    #crosshair::before,
+    #crosshair::after {
+      content: "";
+      position: absolute;
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    #crosshair::before {
+      left: 6px;
+      top: 0;
+      width: 2px;
+      height: 14px;
+    }
+
+    #crosshair::after {
+      left: 0;
+      top: 6px;
+      width: 14px;
+      height: 2px;
+    }
+
+    #darkness {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,0.14) 0%, rgba(0,0,0,0.66) 12%, rgba(0,0,0,0.98) 38%, rgba(0,0,0,1) 100%);
+      opacity: 0;
+      transition: opacity 240ms linear;
+    }
+
+    #gameOver,
+    #clearPanel {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      background: rgba(0, 0, 0, 0.82);
+      color: #fff;
+      z-index: 20;
+      text-align: center;
+    }
+
+    #gameOver strong,
+    #clearPanel strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 42px;
+      letter-spacing: 0;
+    }
+
+    #gameOver strong {
+      color: #ff5b5b;
+    }
+
+    #clearPanel strong {
+      color: #5dff91;
+    }
+
+    #gameOver div,
+    #clearPanel div {
+      font-size: 18px;
+    }
+
+    #restartButton {
+      margin-top: 22px;
+      border: 0;
+      border-radius: 8px;
+      padding: 12px 22px;
+      background: #ffffff;
+      color: #15171c;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #restartButton:hover {
+      background: #eceff3;
+    }
+  </style>
+</head>
+<body>
+  <div id="start">
+    <div>
+      <strong>점자블록 보행 장면</strong>
+      <div>화면을 클릭하면 1인칭 시점이 시작됩니다.</div>
+    </div>
+  </div>
+  <div id="hud">
+    <div id="signalText">신호: 대기</div>
+    <div id="visionText">시야: 정상</div>
+    <div id="buttonText">버튼: 신호등 기둥 앞에서 조준</div>
+    <div id="goalText">목표: 목적지까지 이동</div>
+  </div>
+  <div id="warning">전방에 불법 주정차 차량이 있습니다.</div>
+  <div id="crosshair"></div>
+  <div id="darkness"></div>
+  <div id="gameOver">
+    <div>
+      <strong>GAME OVER</strong>
+      <div id="gameOverMessage">빨간불에 횡단보도를 건넜습니다.</div>
+      <button id="restartButton" type="button">다시 시작</button>
+    </div>
+  </div>
+  <div id="clearPanel">
+    <div>
+      <strong>CLEAR</strong>
+      <div>목적지까지 안전하게 도착했습니다.</div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x9dc7df);
+    scene.fog = new THREE.Fog(0x9dc7df, 48, 145);
+
+    const camera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.1, 260);
+    camera.position.set(-7.05, 1.6, 68);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    document.body.appendChild(renderer.domElement);
+
+    const clock = new THREE.Clock();
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2(0, 0);
+    const keys = {};
+    const buttons = [];
+    const cars = [];
+    const brokenTiles = [];
+    const tactileSegments = [];
+    const obstacles = [];
+
+    const hudSignal = document.getElementById("signalText");
+    const hudVision = document.getElementById("visionText");
+    const hudButton = document.getElementById("buttonText");
+    const hudGoal = document.getElementById("goalText");
+    const warning = document.getElementById("warning");
+    const darkness = document.getElementById("darkness");
+    const start = document.getElementById("start");
+    const gameOverPanel = document.getElementById("gameOver");
+    const gameOverMessage = document.getElementById("gameOverMessage");
+    const restartButton = document.getElementById("restartButton");
+    const clearPanel = document.getElementById("clearPanel");
+    const previewMode = new URLSearchParams(window.location.search).has("preview");
+
+    let yaw = 0;
+    let pitch = 0;
+    let signalElapsed = 0;
+    let signalIndex = 0;
+    let showSignalColors = false;
+    let signalColorTimer = 0;
+    let frozenUntil = 0;
+    let warningTimer = 0;
+    let spawnTimer = 5;
+    let gameOver = false;
+    let gameClear = false;
+    let collisionCount = 0;
+
+    const crossingZs = [45, 15, -25];
+    const destination = new THREE.Vector3(7.05, 1.6, -68);
+
+    const signalCycle = [
+      { name: "초록", duration: 5, color: 0x18d45a },
+      { name: "노랑", duration: 1.5, color: 0xffd43b },
+      { name: "빨강", duration: 5, color: 0xff3434 }
+    ];
+
+    const materials = {
+      road: new THREE.MeshStandardMaterial({ color: 0x262b30, roughness: 0.78 }),
+      sidewalk: new THREE.MeshStandardMaterial({ color: 0x9a9a92, roughness: 0.85 }),
+      ground: new THREE.MeshStandardMaterial({ color: 0x6f8872, roughness: 0.9 }),
+      curb: new THREE.MeshStandardMaterial({ color: 0xd8d8cf, roughness: 0.65 }),
+      white: new THREE.MeshStandardMaterial({ color: 0xf4f4ee, roughness: 0.45 }),
+      tactile: new THREE.MeshStandardMaterial({ color: 0xe4bd21, roughness: 0.75 }),
+      tactileBroken: new THREE.MeshStandardMaterial({ color: 0x8a6f18, roughness: 0.9 }),
+      pole: new THREE.MeshStandardMaterial({ color: 0x30343a, roughness: 0.45 }),
+      button: new THREE.MeshStandardMaterial({ color: 0x316fc9, roughness: 0.35 }),
+      buttonHot: new THREE.MeshStandardMaterial({ color: 0x49a6ff, emissive: 0x12345a, roughness: 0.25 }),
+      trunk: new THREE.MeshStandardMaterial({ color: 0x6a4630, roughness: 0.9 }),
+      leaves: new THREE.MeshStandardMaterial({ color: 0x2d7f4e, roughness: 0.75 }),
+      skin: new THREE.MeshStandardMaterial({ color: 0xc88f6f, roughness: 0.6 }),
+      sleeve: new THREE.MeshStandardMaterial({ color: 0x2b405a, roughness: 0.75 }),
+      blocker: new THREE.MeshStandardMaterial({ color: 0x586273, roughness: 0.78 }),
+      goal: new THREE.MeshStandardMaterial({ color: 0x39d172, emissive: 0x0b4f22, roughness: 0.35 })
+    };
+
+    function box(name, x, y, z, sx, sy, sz, mat, receive = true, cast = true) {
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), mat);
+      mesh.name = name;
+      mesh.position.set(x, y, z);
+      mesh.receiveShadow = receive;
+      mesh.castShadow = cast;
+      scene.add(mesh);
+      return mesh;
+    }
+
+    function addObstacle(name, x, y, z, sx, sy, sz, mat) {
+      const mesh = box(name, x, y, z, sx, sy, sz, mat);
+      const padding = 0.85;
+      obstacles.push({
+        xMin: x - sx / 2 - padding,
+        xMax: x + sx / 2 + padding,
+        zMin: z - sz / 2 - padding,
+        zMax: z + sz / 2 + padding
+      });
+      return mesh;
+    }
+
+    function addBlockerBuilding(name, x, z, side) {
+      const sx = 7.6;
+      const sy = 7.4;
+      const sz = 8.8;
+      const mesh = addObstacle(name, x, sy / 2, z, sx, sy, sz, materials.blocker);
+      const frontZ = z + sz / 2 + 0.035;
+      const trimMat = new THREE.MeshStandardMaterial({ color: 0x343b46, roughness: 0.72 });
+      const windowMat = new THREE.MeshStandardMaterial({ color: 0xbfd8e8, emissive: 0x0c1720, roughness: 0.28 });
+      const doorMat = new THREE.MeshStandardMaterial({ color: 0x2f2520, roughness: 0.62 });
+
+      box(`${name} 옥상 난간`, x, sy + 0.18, z, sx + 0.25, 0.36, sz + 0.25, trimMat);
+      box(`${name} 출입문`, x - side * 1.9, 1.08, frontZ, 1.15, 2.05, 0.08, doorMat, false, false);
+
+      for (let row = 2.35; row < sy - 0.7; row += 1.65) {
+        for (let col = -2.35; col <= 2.35; col += 1.55) {
+          box(`${name} 창문`, x + col, row, frontZ, 0.78, 0.68, 0.07, windowMat, false, false);
         }
       }
-    </script>
-    <style>
-        body {
-            background-color: #17130a;
-            color: #ece1d2;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
+
+      const sideX = x - side * (sx / 2 + 0.035);
+      for (let row = 2.35; row < sy - 0.7; row += 1.65) {
+        for (let col = -2.4; col <= 2.4; col += 1.6) {
+          box(`${name} 측면 창문`, sideX, row, z + col, 0.07, 0.62, 0.76, windowMat, false, false);
         }
+      }
 
-        .glass {
-            background: rgba(36, 31, 21, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+      return mesh;
+    }
+
+    function cyl(name, radiusTop, radiusBottom, height, mat, segments = 24) {
+      const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radiusTop, radiusBottom, height, segments), mat);
+      mesh.name = name;
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      scene.add(mesh);
+      return mesh;
+    }
+
+    function addLights() {
+      const hemi = new THREE.HemisphereLight(0xe9f4ff, 0x667060, 1.3);
+      scene.add(hemi);
+      const sun = new THREE.DirectionalLight(0xffffff, 1.15);
+      sun.position.set(-24, 38, 16);
+      sun.castShadow = true;
+      sun.shadow.mapSize.set(2048, 2048);
+      sun.shadow.camera.left = -70;
+      sun.shadow.camera.right = 70;
+      sun.shadow.camera.top = 70;
+      sun.shadow.camera.bottom = -70;
+      scene.add(sun);
+    }
+
+    function addRoad() {
+      box("좌측 외부 지면", -22.5, -0.04, 0, 20, 0.08, 150, materials.ground, true, false);
+      box("우측 외부 지면", 22.5, -0.04, 0, 20, 0.08, 150, materials.ground, true, false);
+      box("도로", 0, -0.03, 0, 9.2, 0.06, 150, materials.road, true, false);
+      box("좌측 인도", -9.0, 0.05, 0, 7.2, 0.12, 150, materials.sidewalk, true, false);
+      box("우측 인도", 9.0, 0.05, 0, 7.2, 0.12, 150, materials.sidewalk, true, false);
+      box("좌측 경계석", -5.1, 0.18, 0, 0.32, 0.36, 150, materials.curb);
+      box("우측 경계석", 5.1, 0.18, 0, 0.32, 0.36, 150, materials.curb);
+
+      for (let z = -70; z <= 70; z += 8) {
+        box("중앙 점선", 0, 0.02, z, 0.22, 0.025, 4.2, materials.white, false, false);
+      }
+      box("좌측 흰 실선", -4.15, 0.025, 0, 0.16, 0.025, 150, materials.white, false, false);
+      box("우측 흰 실선", 4.15, 0.025, 0, 0.16, 0.025, 150, materials.white, false, false);
+
+      crossingZs.forEach(addCrosswalk);
+      box("목적지", 7.05, 0.18, -68, 2.0, 0.12, 1.6, materials.goal, false, false);
+    }
+
+    function addCrosswalk(z) {
+      for (let x = -3.8; x <= 3.8; x += 1.25) {
+        box("횡단보도 줄무늬", x, 0.045, z, 0.72, 0.035, 7.4, materials.white, false, false);
+      }
+      box("횡단보도 정지선 북", 0, 0.045, z + 5.1, 8.3, 0.035, 0.2, materials.white, false, false);
+      box("횡단보도 정지선 남", 0, 0.045, z - 5.1, 8.3, 0.035, 0.2, materials.white, false, false);
+    }
+
+    function addTactileSegment(x, z, length, side) {
+      const base = box("점자블록", x, 0.14, z, 0.82, 0.08, length, materials.tactile, true, false);
+      tactileSegments.push({ x, zMin: z - length / 2, zMax: z + length / 2, side, broken: false });
+      for (let dz = z - length / 2 + 0.75; dz < z + length / 2; dz += 1.1) {
+        for (let dx = -0.24; dx <= 0.24; dx += 0.24) {
+          const dot = cyl("점자 돌기", 0.055, 0.07, 0.035, materials.tactile, 10);
+          dot.position.set(x + dx, 0.21, dz);
         }
+      }
+      return base;
+    }
 
-        .pulse-glow {
-            animation: pulse-animation 2s infinite;
+    function addBrokenTile(x, z) {
+      const tile = box("부서진 점자블록", x, 0.151, z, 0.9, 0.09, 1.6, materials.tactileBroken);
+      tile.rotation.y = 0.05;
+      brokenTiles.push({ x, z, radius: 2.4 });
+      for (let i = 0; i < 8; i++) {
+        const chip = box("깨진 조각", x + (Math.random() - 0.5) * 0.7, 0.24, z + (Math.random() - 0.5) * 1.2, 0.14, 0.08, 0.18, materials.tactileBroken);
+        chip.rotation.set(Math.random() * 0.5, Math.random() * 0.8, Math.random() * 0.4);
+      }
+    }
+
+    function addTactileBlocks() {
+      addTactileSegment(-7.05, 56.5, 25, "left");
+      addTactileSegment(7.05, 30, 30, "right");
+      addTactileSegment(-7.05, -5, 40, "left");
+      addTactileSegment(7.05, -47.5, 45, "right");
+      crossingZs.forEach(z => {
+        box("좌측 횡단 유도블록", -6.05, 0.15, z, 1.9, 0.08, 0.82, materials.tactile);
+        box("우측 횡단 유도블록", 6.05, 0.15, z, 1.9, 0.08, 0.82, materials.tactile);
+      });
+      addBrokenTile(7.05, 26);
+      addBrokenTile(-7.05, -8);
+      addBrokenTile(7.05, -51);
+    }
+
+    function addTrafficLight(x, z, facing) {
+      const group = new THREE.Group();
+      group.position.set(x, 0, z);
+      scene.add(group);
+
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.11, 3.2, 24), materials.pole);
+      pole.position.y = 1.65;
+      pole.castShadow = true;
+      group.add(pole);
+
+      const arm = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.12, 0.12), materials.pole);
+      arm.position.set(facing * 0.55, 3.0, 0);
+      arm.castShadow = true;
+      group.add(arm);
+
+      const head = new THREE.Mesh(new THREE.BoxGeometry(0.34, 1.1, 0.5), new THREE.MeshStandardMaterial({ color: 0x202326, roughness: 0.4 }));
+      head.position.set(facing * 1.2, 2.75, 0);
+      head.castShadow = true;
+      group.add(head);
+
+      const bulbPositions = [0.31, 0, -0.31];
+      const bulbs = bulbPositions.map((by, i) => {
+        const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.13, 24, 16), new THREE.MeshStandardMaterial({ color: 0x222, emissive: 0x000000 }));
+        bulb.position.set(facing * 1.2 + facing * 0.18, 2.75 + by, 0);
+        bulb.userData.signalIndex = i;
+        group.add(bulb);
+        return bulb;
+      });
+
+      const button = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.28, 0.12), materials.button);
+      button.position.set(0, 1.08, facing * -0.13);
+      button.name = "신호등 버튼";
+      button.userData.isButton = true;
+      button.castShadow = true;
+      group.add(button);
+      buttons.push(button);
+
+      group.userData.bulbs = bulbs;
+      return group;
+    }
+
+    const trafficLights = [];
+    crossingZs.forEach(z => {
+      trafficLights.push(addTrafficLight(-5.9, z - 3.6, 1));
+      trafficLights.push(addTrafficLight(5.9, z + 3.6, -1));
+    });
+
+    function addBuildingsAndTrees() {
+      const buildingMats = [
+        new THREE.MeshStandardMaterial({ color: 0x7f9fb5, roughness: 0.68 }),
+        new THREE.MeshStandardMaterial({ color: 0xb58d74, roughness: 0.72 }),
+        new THREE.MeshStandardMaterial({ color: 0x868f9c, roughness: 0.7 }),
+        new THREE.MeshStandardMaterial({ color: 0xa8a069, roughness: 0.76 })
+      ];
+
+      const slots = [
+        [-18.8, -58, 10, 13, 11], [18.8, -55, 9, 17, 12],
+        [-19.0, -40, 11, 20, 12], [18.7, -30, 10, 14, 11],
+        [-18.6, -2, 9, 16, 13], [19.1, 5, 12, 22, 12],
+        [-19.0, 28, 11, 18, 12], [18.8, 58, 10, 15, 10],
+        [-18.7, 64, 9, 14, 10], [19.2, 34, 9, 16, 10]
+      ];
+
+      slots.forEach((s, idx) => {
+        const [x, z, sx, sy, sz] = s;
+        const b = box("건물", x, sy / 2, z, sx, sy, sz, buildingMats[idx % buildingMats.length]);
+        for (let row = 1.8; row < sy - 1; row += 2.2) {
+          for (let col = -sx / 2 + 1.1; col < sx / 2 - 0.7; col += 1.6) {
+            const wx = x < 0 ? x + sx / 2 + 0.03 : x - sx / 2 - 0.03;
+            const win = box("창문", wx, row, z + col, 0.06, 0.68, 0.8, new THREE.MeshStandardMaterial({ color: 0xbfd8e8, emissive: 0x101820, roughness: 0.25 }), false, false);
+          }
         }
+      });
 
-        @keyframes pulse-animation {
-            0% { box-shadow: 0 0 0 0px rgba(248, 189, 42, 0.4); }
-            70% { box-shadow: 0 0 0 20px rgba(248, 189, 42, 0); }
-            100% { box-shadow: 0 0 0 0px rgba(248, 189, 42, 0); }
+      addBlockerBuilding("차단 건물 1", -9.0, 38, -1);
+      addBlockerBuilding("차단 건물 2", 9.0, 8, 1);
+      addBlockerBuilding("차단 건물 3", -9.0, -32, -1);
+
+      for (let side of [-1, 1]) {
+        for (let z = -63; z <= 63; z += 14) {
+          const trunk = cyl("가로수 줄기", 0.11, 0.15, 1.4, materials.trunk, 12);
+          trunk.position.set(side * 11.25, 0.76, z);
+          const crown = new THREE.Mesh(new THREE.SphereGeometry(0.8, 20, 14), materials.leaves);
+          crown.position.set(side * 11.25, 1.85, z);
+          crown.castShadow = true;
+          scene.add(crown);
         }
+      }
+    }
 
-        .monitor-reflection::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 50%);
-            pointer-events: none;
+    function createCar(x, z, color) {
+      const group = new THREE.Group();
+      group.position.set(x, 0.18, z);
+      scene.add(group);
+
+      const bodyMat = new THREE.MeshStandardMaterial({ color, roughness: 0.42, metalness: 0.15 });
+      const body = new THREE.Mesh(new THREE.BoxGeometry(1.65, 0.62, 3.25), bodyMat);
+      body.position.y = 0.42;
+      body.castShadow = true;
+      body.receiveShadow = true;
+      group.add(body);
+
+      const roof = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.48, 1.45), new THREE.MeshStandardMaterial({ color: 0xd7eef8, roughness: 0.2 }));
+      roof.position.set(0, 0.92, -0.2);
+      roof.castShadow = true;
+      group.add(roof);
+
+      for (let dx of [-0.86, 0.86]) {
+        for (let dz of [-1.08, 1.08]) {
+          const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.23, 0.17, 18), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 }));
+          wheel.rotation.z = Math.PI / 2;
+          wheel.position.set(dx, 0.24, dz);
+          wheel.castShadow = true;
+          group.add(wheel);
         }
+      }
 
-        kbd {
-            background: #241f15;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-bottom: 3px solid rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            padding: 8px 12px;
-            min-width: 40px;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-        }
+      group.userData.radius = 1.65;
+      group.userData.hitCooldown = 0;
+      cars.push(group);
+      return group;
+    }
 
-        .gradient-text {
-            background: linear-gradient(to bottom right, #ffe2aa, #f8bd2a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-    </style>
-</head>
-<body class="font-body-md text-body-md">
-    <!-- TopAppBar -->
-    <header class="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-xl border-b border-white/10 shadow-[0_0_20px_rgba(248,189,42,0.1)]">
-        <div class="flex justify-between items-center px-margin-mobile md:px-gutter max-w-container-max mx-auto h-20">
-            <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">visibility</span>
-                <span class="font-display-lg text-display-lg tracking-tighter text-primary">BARRIER-FREE</span>
-            </div>
-            <nav class="hidden md:flex items-center gap-8 font-headline-md text-headline-md">
-                <a class="text-primary border-b-2 border-primary pb-1" href="#intro">소개</a>
-                <a class="text-on-surface-variant hover:text-primary transition-colors" href="#guide">가이드</a>
-                <a class="text-on-surface-variant hover:text-primary transition-colors" href="#campaign">캠페인</a>
-            </nav>
-            <div class="md:hidden">
-                <span class="material-symbols-outlined text-on-surface cursor-pointer">menu</span>
-            </div>
-        </div>
-    </header>
+    function spawnIllegalCar() {
+      const side = Math.random() < 0.5 ? -1 : 1;
+      const x = side * (6.6 + Math.random() * 0.65);
+      const z = THREE.MathUtils.clamp(camera.position.z + 28 + Math.random() * 34, -64, 64);
+      const car = createCar(x, z, Math.random() < 0.5 ? 0xb93838 : 0x2f5e96);
+      car.rotation.y = Math.random() < 0.5 ? 0 : Math.PI;
+      if (cars.length > 6) {
+        const old = cars.shift();
+        scene.remove(old);
+      }
+    }
 
-    <main class="pt-20">
-        <!-- Hero Section -->
-        <section class="relative min-h-[90vh] flex flex-col items-center justify-center text-center px-margin-mobile overflow-hidden" id="intro">
-            <div class="relative z-10 max-w-4xl animate-in fade-in slide-in-from-bottom-10 duration-1000">
-                <span class="inline-block px-4 py-1 rounded-full border border-primary/30 text-primary font-label-caps text-label-caps mb-6 bg-primary/5">3D IMPRESSIVE SIMULATION</span>
-                <h1 class="font-display-lg text-display-lg md:text-6xl mb-8 gradient-text leading-tight">
-                    빛을 잃은 보도 위,<br/>노란 선을 따라 걷다
-                </h1>
-                <p class="text-on-surface-variant font-body-lg text-body-lg mb-12 max-w-2xl mx-auto opacity-80">
-                    인도 위 무단 점유된 불법 주정차 차량과 파손된 점자 블록.<br/>
-                    누군가에게는 평범한 길이, 누군가에게는 목숨을 건 도전이 됩니다.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <a class="group relative bg-primary-container text-on-primary-fixed px-10 py-5 rounded-full font-headline-md text-headline-md pulse-glow transition-transform active:scale-95" href="#simulation">
-                        체험하기
-                    </a>
-                    <button class="px-10 py-5 rounded-full border border-white/20 hover:bg-white/5 transition-colors font-headline-md text-headline-md" onclick="document.getElementById('simulation').scrollIntoView({behavior: 'smooth'})">
-                        캠페인 체험 구역으로 이동
-                    </button>
-                </div>
-            </div>
-            <!-- Floating Braille Icon Background Decoration -->
-            <div class="absolute bottom-20 left-1/2 -translate-x-1/2 opacity-20 pointer-events-none">
-                <span class="material-symbols-outlined text-9xl">apps</span>
-            </div>
-        </section>
+    function addCane() {
+      const caneGroup = new THREE.Group();
+      camera.add(caneGroup);
+      scene.add(camera);
 
-        <!-- Simulation Monitor Frame -->
-        <section class="py-section-gap px-margin-mobile md:px-gutter max-w-container-max mx-auto" id="simulation">
-            <div class="text-center mb-16">
-                <h2 class="font-display-lg text-display-lg mb-4">직접 마주하는 불편</h2>
-                <div class="w-24 h-1 bg-primary mx-auto rounded-full"></div>
-            </div>
-            <div class="relative group">
-                <div class="monitor-frame glass rounded-2xl border-4 border-white/5 shadow-2xl overflow-hidden aspect-video relative monitor-reflection" id="iframe-container">
-                    <div class="absolute inset-0 bg-surface-container-low flex items-center justify-center">
-                        <div class="w-full h-full bg-zinc-900 flex items-center justify-center relative">
-                            <img id="placeholder-img" class="w-full h-full object-cover opacity-50" data-alt="3D simulation street view" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVElXz0w_EqekubbYbELq75QvS6-Dh7Kakrs8SQAXd9fP9w5GicTkym_UeC_JaLh4jB1JgMA-NFAImHbYhDV5ydtyWgVns076oBg7hn9i5v3e9GCtheHpywH0iptQQRQJZJlmjPeqCQTJPoaWsItApu4BBEpUsz4smwu7hVwOaIUk8KiOpGG2xBIQp_9yPWmcNZ8VTZ8cQrEJaH9vjOFZ49d_xuqgvdWOrXTfIRApo2HSzsTRAG8qe"/>
-                            <div id="play-overlay" class="absolute inset-0 flex flex-col items-center justify-center cursor-pointer group-hover:bg-black/40 transition-colors z-20">
-                                <span class="material-symbols-outlined text-7xl text-primary mb-4">play_circle</span>
-                                <p class="text-primary font-headline-md text-headline-md bg-surface/80 px-6 py-2 rounded-lg backdrop-blur-md text-center">
-                                    화면을 클릭하여 체험을 시작하세요
-                                </p>
-                            </div>
-                            <iframe id="game-iframe" src="" allow="pointer-lock" class="absolute inset-0 w-full h-full border-none hidden z-10"></iframe>
-                        </div>
-                    </div>
-                </div>
-                <!-- Controls Quick Help Overlay -->
-                <div class="absolute top-6 left-6 flex gap-2">
-                    <div class="bg-black/60 backdrop-blur-md border border-white/10 rounded-lg px-3 py-1 flex items-center gap-2">
-                        <span class="material-symbols-outlined text-sm text-secondary">wifi_tethering</span>
-                        <span class="text-xs font-label-caps">FPS MODE ACTIVE</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+      function segment(name, from, to, radiusA, radiusB, mat, sides = 14) {
+        const length = from.distanceTo(to);
+        const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radiusA, radiusB, length, sides), mat);
+        mesh.name = name;
+        mesh.position.copy(from).add(to).multiplyScalar(0.5);
+        const direction = to.clone().sub(from).normalize();
+        mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
+        caneGroup.add(mesh);
+        return mesh;
+      }
 
-        <!-- Gameplay Guide Grid -->
-        <section class="py-section-gap bg-surface-container-lowest/50" id="guide">
-            <div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-                    <div>
-                        <h2 class="font-display-lg text-display-lg mb-8 leading-tight">시각을 넘어선<br/>감각의 조작</h2>
-                        <p class="text-on-surface-variant font-body-lg text-body-lg mb-12">
-                            시각 정보가 제한된 환경에서 청각과 촉각 정보만을 사용하여 목적지까지 이동하십시오. 점자 블록이 제공하는 감각 피드백을 신뢰해야 합니다.
-                        </p>
-                        <div class="space-y-8">
-                            <div class="flex items-center gap-6">
-                                <div class="flex gap-1">
-                                    <kbd>W</kbd>
-                                    <div class="flex flex-col gap-1">
-                                        <div class="flex gap-1">
-                                            <kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <h4 class="font-headline-md text-headline-md text-on-surface">이동 (Movement)</h4>
-                                    <p class="text-on-surface-variant text-sm">한 걸음씩 조심스럽게 전진합니다.</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-6">
-                                <div class="flex gap-1">
-                                    <kbd class="px-8">Mouse</kbd>
-                                </div>
-                                <div>
-                                    <h4 class="font-headline-md text-headline-md text-on-surface">시선 전환 (Rotation)</h4>
-                                    <p class="text-on-surface-variant text-sm">주변의 소리와 흐릿한 형체를 살핍니다.</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-6">
-                                <div class="flex gap-1">
-                                    <kbd>E</kbd>
-                                </div>
-                                <div>
-                                    <h4 class="font-headline-md text-headline-md text-on-surface">상호작용 (Interaction)</h4>
-                                    <p class="text-on-surface-variant text-sm">신호기 근처에서 기둥 음성 안내 버튼 작동.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="glass p-8 rounded-2xl border-l-4 border-primary shadow-xl">
-                            <div class="flex items-center gap-4 mb-4">
-                                <span class="material-symbols-outlined text-primary text-3xl">grid_view</span>
-                                <h3 class="font-headline-md text-headline-md">점자 블록 감지</h3>
-                            </div>
-                            <p class="text-on-surface-variant text-sm leading-relaxed">
-                                노란 블록 위에 올라설 때 지팡이에서 울리는 진동과 사운드에 집중하세요. 정지 블록(점형)과 유도 블록(선형)을 구분해야 합니다.
-                            </p>
-                        </div>
-                        <div class="glass p-8 rounded-2xl border-l-4 border-error shadow-xl">
-                            <div class="flex items-center gap-4 mb-4">
-                                <span class="material-symbols-outlined text-error text-3xl">warning</span>
-                                <h3 class="font-headline-md text-headline-md">위험 요소 (Game Over)</h3>
-                            </div>
-                            <p class="text-on-surface-variant text-sm leading-relaxed">
-                                불법 주차 차량과 3회 충돌하거나 적색 신호에 도로(차도)로 진입할 경우 게임 오버됩니다. 안전 보행을 위협하는 장벽을 느껴보세요.
-                            </p>
-                        </div>
-                        <div class="glass p-8 rounded-2xl border-l-4 border-secondary shadow-xl md:col-span-2">
-                            <div class="flex items-center gap-4 mb-4">
-                                <span class="material-symbols-outlined text-secondary text-3xl">volume_up</span>
-                                <h3 class="font-headline-md text-headline-md">서라운드 오디오 시스템</h3>
-                            </div>
-                            <p class="text-on-surface-variant text-sm leading-relaxed">
-                                3D 공간 음향을 통해 다가오는 차량의 위치와 횡단보도의 음향 신호기 소리를 파악하십시오. 헤드셋 사용을 강력히 권장합니다.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+      const shoulder = new THREE.Vector3(0.62, -0.35, -0.52);
+      const elbow = new THREE.Vector3(0.49, -0.52, -0.72);
+      const wrist = new THREE.Vector3(0.41, -0.62, -0.9);
+      const gripStart = new THREE.Vector3(0.34, -0.6, -0.86);
+      const gripEnd = new THREE.Vector3(0.42, -0.73, -1.03);
+      const caneEnd = new THREE.Vector3(0.18, -1.16, -1.72);
 
-        <!-- Features Grid -->
-        <section class="py-section-gap px-margin-mobile md:px-gutter max-w-container-max mx-auto">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Feature 1 -->
-                <div class="glass p-10 rounded-2xl flex flex-col gap-6 hover:-translate-y-2 transition-all duration-300 group">
-                    <div class="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <span class="material-symbols-outlined text-4xl text-primary">view_in_ar</span>
-                    </div>
-                    <div>
-                        <h3 class="font-headline-md text-headline-md mb-3">3D 몰입형 보행 환경</h3>
-                        <p class="text-on-surface-variant text-sm">Three.js 기반의 사실적인 도시 재현으로 실제 보도 환경과 도로를 경험합니다.</p>
-                    </div>
-                </div>
-                <!-- Feature 2 -->
-                <div class="glass p-10 rounded-2xl flex flex-col gap-6 hover:-translate-y-2 transition-all duration-300 group">
-                    <div class="w-16 h-16 rounded-xl bg-secondary/10 flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
-                        <span class="material-symbols-outlined text-4xl text-secondary">visibility_off</span>
-                    </div>
-                    <div>
-                        <h3 class="font-headline-md text-headline-md mb-3">시각 제한 페이딩</h3>
-                        <p class="text-on-surface-variant text-sm">점자블록 이탈 또는 유실 구간 보행 시 99.9% 암전 효과로 시각 장애의 보행을 체감합니다.</p>
-                    </div>
-                </div>
-                <!-- Feature 3 -->
-                <div class="glass p-10 rounded-2xl flex flex-col gap-6 hover:-translate-y-2 transition-all duration-300 group">
-                    <div class="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <span class="material-symbols-outlined text-4xl text-primary">hearing</span>
-                    </div>
-                    <div>
-                        <h3 class="font-headline-md text-headline-md mb-3">오디오 가이던스</h3>
-                        <p class="text-on-surface-variant text-sm">신호 상태(적색/청색) 안내 음향 시스템과 안내 방송이 결합된 음향 유도시스템 탑재.</p>
-                    </div>
-                </div>
-                <!-- Feature 4 -->
-                <div class="glass p-10 rounded-2xl flex flex-col gap-6 hover:-translate-y-2 transition-all duration-300 group">
-                    <div class="w-16 h-16 rounded-xl bg-tertiary-container/10 flex items-center justify-center group-hover:bg-tertiary-container/20 transition-colors">
-                        <span class="material-symbols-outlined text-4xl text-tertiary-container">touch_app</span>
-                    </div>
-                    <div>
-                        <h3 class="font-headline-md text-headline-md mb-3">지팡이 촉각 사운드</h3>
-                        <p class="text-on-surface-variant text-sm">지표면 재질(점자블록, 인도 블록, 깨진 타일, 아스팔트)에 따라 달라지는 지팡이 타격음 구현.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+      segment("소매", shoulder, elbow, 0.06, 0.074, materials.sleeve, 16);
+      segment("팔", elbow, wrist, 0.044, 0.055, materials.skin, 16);
+      segment("손잡이", gripStart, gripEnd, 0.035, 0.039, new THREE.MeshStandardMaterial({ color: 0x252525, roughness: 0.6 }), 14);
+      segment("흰 지팡이", gripEnd, caneEnd, 0.021, 0.026, new THREE.MeshStandardMaterial({ color: 0xf1f1f1, roughness: 0.3 }), 14);
+      segment("빨간 지팡이 끝", caneEnd.clone().lerp(gripEnd, 0.18), caneEnd, 0.023, 0.026, new THREE.MeshStandardMaterial({ color: 0xc93636, roughness: 0.35 }), 14);
 
-        <!-- Campaign Section -->
-        <section class="relative py-32 overflow-hidden" id="campaign">
-            <div class="relative z-10 max-w-5xl mx-auto px-margin-mobile text-center">
-                <div class="mb-12">
-                    <span class="material-symbols-outlined text-error text-6xl mb-6">report</span>
-                    <h2 class="font-display-lg text-display-lg md:text-5xl mb-12 leading-tight">
-                        인도 위 불법 주정차,<br/>누군가에게는 보이지 않는 벽입니다.
-                    </h2>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="glass p-12 rounded-3xl">
-                        <div class="text-4xl font-extrabold text-primary mb-2">91%</div>
-                        <p class="text-on-surface-variant text-sm">장애인 중 절반 이상이 보행 중 사고 위험을 매일 느낍니다.</p>
-                    </div>
-                    <div class="glass p-12 rounded-3xl">
-                        <div class="text-4xl font-extrabold text-error mb-2">1.5m</div>
-                        <p class="text-on-surface-variant text-sm">최소한의 이동 폭조차 확보되지 않는 보행 환경의 현실.</p>
-                    </div>
-                    <div class="glass p-12 rounded-3xl">
-                        <div class="text-4xl font-extrabold text-secondary mb-2">#0</div>
-                        <p class="text-on-surface-variant text-sm">우리가 추구해야 할 장벽 없는 세상의 목표치입니다.</p>
-                    </div>
-                </div>
-                <div class="mt-20">
-                    <button class="bg-surface p-8 rounded-2xl glass border border-white/20 inline-flex flex-col items-center gap-4 hover:border-primary/50 transition-all duration-500">
-                        <p class="text-on-surface font-headline-md text-headline-md">캠페인 서명 참여하기</p>
-                        <div class="flex -space-x-4">
-                            <!-- Placeholder Profile Avatars -->
-                            <div class="w-12 h-12 rounded-full border-2 border-surface bg-zinc-700"></div>
-                            <div class="w-12 h-12 rounded-full border-2 border-surface bg-zinc-600"></div>
-                            <div class="w-12 h-12 rounded-full border-2 border-surface bg-zinc-500"></div>
-                            <div class="w-12 h-12 rounded-full border-2 border-surface bg-primary flex items-center justify-center text-on-primary font-bold text-xs">+1.2k</div>
-                        </div>
-                    </button>
-                </div>
-            </div>
-        </section>
-    </main>
+      const hand = new THREE.Mesh(new THREE.SphereGeometry(0.092, 18, 12), materials.skin);
+      hand.position.copy(wrist);
+      hand.scale.set(1.12, 0.72, 0.86);
+      caneGroup.add(hand);
 
-    <!-- Footer -->
-    <footer class="w-full bg-surface-container-lowest border-t border-white/5">
-        <div class="flex flex-col md:flex-row justify-between items-center py-stack-lg px-margin-mobile md:px-gutter max-w-container-max mx-auto gap-8">
-            <div class="flex flex-col items-center md:items-start gap-4">
-                <div class="font-label-caps text-label-caps text-on-surface-variant flex items-center gap-2">
-                    <span class="material-symbols-outlined text-lg">visibility</span>
-                    BARRIER-FREE CAMPAIGN
-                </div>
-                <p class="text-on-surface-variant opacity-60 text-sm">© 2026 Barrier-Free Campaign. All rights reserved.</p>
-            </div>
-            <div class="flex flex-wrap justify-center gap-8 font-body-md text-body-md">
-                <a class="text-on-surface-variant hover:text-primary transition-colors" href="#intro">Intro</a>
-                <a class="text-on-surface-variant hover:text-primary transition-colors" href="#guide">Guide</a>
-                <a class="text-on-surface-variant hover:text-primary transition-colors" href="#campaign">Campaign</a>
-            </div>
-            <div class="flex gap-4">
-                <button class="w-10 h-10 rounded-full glass flex items-center justify-center text-on-surface hover:text-primary transition-colors">
-                    <span class="material-symbols-outlined text-xl">share</span>
-                </button>
-                <button class="w-10 h-10 rounded-full glass flex items-center justify-center text-on-surface hover:text-primary transition-colors">
-                    <span class="material-symbols-outlined text-xl">forum</span>
-                </button>
-            </div>
-        </div>
-    </footer>
+      for (let i = 0; i < 4; i++) {
+        const offset = i * 0.028;
+        const fingerFrom = new THREE.Vector3(0.36 + offset, -0.62, -0.9);
+        const fingerTo = new THREE.Vector3(0.4 + offset, -0.71, -1.01);
+        segment("손가락", fingerFrom, fingerTo, 0.012, 0.016, materials.skin, 10);
+      }
+    }
 
-    <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
+    function currentSignal() {
+      return signalCycle[signalIndex];
+    }
+
+    function updateTrafficLights() {
+      trafficLights.forEach(light => {
+        light.userData.bulbs.forEach((bulb, i) => {
+          const mapIndex = i === 0 ? 2 : i === 1 ? 1 : 0;
+          const isActive = mapIndex === signalIndex;
+          const color = showSignalColors
+            ? (isActive ? currentSignal().color : 0x181818)
+            : (isActive ? 0xf0f0f0 : 0x333333);
+          const emissive = showSignalColors && isActive ? currentSignal().color : (isActive ? 0x222222 : 0x000000);
+          bulb.material.color.setHex(color);
+          bulb.material.emissive.setHex(emissive);
+          bulb.material.needsUpdate = true;
         });
+      });
+      hudSignal.textContent = `신호: ${showSignalColors ? currentSignal().name : "흑백 표시"} (${Math.max(0, currentSignal().duration - signalElapsed).toFixed(1)}초)`;
+    }
 
-        // Add subtle intersection observer for fade-in elements
-        const observerOptions = {
-            threshold: 0.1
-        };
+    function pressSignalButton() {
+      showSignalColors = true;
+      signalColorTimer = 18;
+      buttons.forEach(button => {
+        button.material = materials.buttonHot;
+      });
+      const msg = `신호등 음성 안내입니다. 현재 ${currentSignal().name}불입니다.`;
+      hudButton.textContent = "버튼: 음성 안내 중";
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(msg);
+        utterance.lang = "ko-KR";
+        utterance.rate = 0.95;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-in', 'fade-in', 'duration-700');
-                    if (entry.target.classList.contains('glass')) {
-                        entry.target.classList.add('slide-in-from-bottom-5');
-                    }
-                }
-            });
-        }, observerOptions);
+    function updateSignal(dt) {
+      signalElapsed += dt;
+      if (signalElapsed >= currentSignal().duration) {
+        signalElapsed = 0;
+        signalIndex = (signalIndex + 1) % signalCycle.length;
+        if (showSignalColors && "speechSynthesis" in window) {
+          const utterance = new SpeechSynthesisUtterance(`신호가 ${currentSignal().name}불로 바뀌었습니다.`);
+          utterance.lang = "ko-KR";
+          utterance.rate = 0.98;
+          window.speechSynthesis.speak(utterance);
+        }
+      }
+      if (showSignalColors) {
+        signalColorTimer -= dt;
+        if (signalColorTimer <= 0) {
+          showSignalColors = false;
+          buttons.forEach(button => {
+            button.material = materials.button;
+          });
+          hudButton.textContent = "버튼: 신호등 기둥 앞에서 조준";
+        }
+      }
+      updateTrafficLights();
+    }
 
-        document.querySelectorAll('.glass').forEach(el => observer.observe(el));
+    function onTactilePath(pos) {
+      return tactileSegments.some(seg =>
+        Math.abs(pos.x - seg.x) < 0.58 && pos.z >= seg.zMin && pos.z <= seg.zMax
+      ) || crossingZs.some(z => Math.abs(pos.z - z) < 0.65 && (Math.abs(pos.x + 6.05) < 1.05 || Math.abs(pos.x - 6.05) < 1.05));
+    }
 
-        // Interactive dynamic iframe loading to avoid sound blocking on load
-        const playOverlay = document.getElementById('play-overlay');
-        const gameIframe = document.getElementById('game-iframe');
-        const placeholderImg = document.getElementById('placeholder-img');
-        
-        playOverlay.addEventListener('click', () => {
-            playOverlay.style.display = 'none';
-            if (placeholderImg) placeholderImg.style.display = 'none';
-            gameIframe.src = 'game.html';
-            gameIframe.classList.remove('hidden');
-        });
-    </script>
+    function brokenAhead(pos) {
+      const forward = new THREE.Vector3(Math.sin(yaw), 0, -Math.cos(yaw));
+      return brokenTiles.some(tile => {
+        const toTile = new THREE.Vector3(tile.x - pos.x, 0, tile.z - pos.z);
+        const dist = toTile.length();
+        if (dist > tile.radius) return false;
+        toTile.normalize();
+        return forward.dot(toTile) > 0.25;
+      });
+    }
+
+    function updateVision() {
+      if (gameOver || gameClear) return;
+      const safe = onTactilePath(camera.position) && !brokenAhead(camera.position);
+      const crossing = isOnCrosswalk(camera.position);
+      const opacity = safe || crossing ? 0 : 0.99;
+      darkness.style.opacity = opacity;
+      hudVision.textContent = opacity > 0 ? "시야: 매우 어두움" : "시야: 정상";
+    }
+
+    function isOnCrosswalk(pos) {
+      return crossingZs.some(z => Math.abs(pos.z - z) < 4.4 && Math.abs(pos.x) < 5.2);
+    }
+
+    function triggerGameOver(reason = "빨간불에 횡단보도를 건넜습니다.") {
+      if (gameOver) return;
+      gameOver = true;
+      gameOverMessage.textContent = reason;
+      gameOverPanel.style.display = "grid";
+      darkness.style.opacity = 0;
+      if (document.pointerLockElement === renderer.domElement && document.exitPointerLock) {
+        document.exitPointerLock();
+      }
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(`게임 오버입니다. ${reason}`);
+        utterance.lang = "ko-KR";
+        utterance.rate = 0.95;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function checkRedLightCrossing() {
+      if (gameOver || gameClear) return;
+      if (signalIndex === 2 && isOnCrosswalk(camera.position)) {
+        triggerGameOver("빨간불에 횡단보도를 건넜습니다.");
+      }
+    }
+
+    function triggerClear() {
+      if (gameClear || gameOver) return;
+      gameClear = true;
+      clearPanel.style.display = "grid";
+      darkness.style.opacity = 0;
+      if (document.pointerLockElement === renderer.domElement && document.exitPointerLock) {
+        document.exitPointerLock();
+      }
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance("클리어입니다. 목적지까지 안전하게 도착했습니다.");
+        utterance.lang = "ko-KR";
+        utterance.rate = 0.95;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function updateGoal() {
+      const nextIndex = crossingZs.findIndex(z => camera.position.z > z + 4.4);
+      const nextText = nextIndex >= 0 ? `${nextIndex + 1}번째 신호등까지 이동` : "목적지까지 이동";
+      hudGoal.textContent = `목표: ${nextText} / 차량 충돌 ${collisionCount}/3`;
+      if (camera.position.distanceTo(destination) < 2.2) {
+        triggerClear();
+      }
+    }
+
+    function showWarning(text, seconds = 1.2) {
+      warning.textContent = text;
+      warning.style.opacity = 1;
+      warningTimer = Math.max(warningTimer, seconds);
+    }
+
+    function updateCars(dt, now) {
+      if (gameOver || gameClear) return;
+      spawnTimer -= dt;
+      if (spawnTimer <= 0) {
+        spawnIllegalCar();
+        spawnTimer = 11 + Math.random() * 9;
+      }
+
+      let nearCar = false;
+      cars.forEach(car => {
+        car.userData.hitCooldown = Math.max(0, car.userData.hitCooldown - dt);
+        const dx = camera.position.x - car.position.x;
+        const dz = camera.position.z - car.position.z;
+        const dist = Math.sqrt(dx * dx + dz * dz);
+        if (dist < 4.0) nearCar = true;
+        if (dist < car.userData.radius && car.userData.hitCooldown <= 0 && now > frozenUntil) {
+          frozenUntil = now + 3;
+          car.userData.hitCooldown = 4;
+          collisionCount += 1;
+          if (collisionCount >= 3) {
+            triggerGameOver("불법 주정차 차량에 3번 이상 부딪혔습니다.");
+          } else {
+            showWarning(`차량과 충돌했습니다. 3초간 움직일 수 없습니다. (${collisionCount}/3)`, 3);
+          }
+        }
+      });
+      if (nearCar && now > frozenUntil) {
+        showWarning("전방에 불법 주정차 차량이 있습니다.", 0.45);
+      }
+    }
+
+    function movePlayer(dt, now) {
+      if (gameOver || gameClear) return;
+      if (now < frozenUntil) return;
+
+      const speed = keys.ShiftLeft || keys.ShiftRight ? 5.2 : 3.25;
+      const forward = new THREE.Vector3();
+      camera.getWorldDirection(forward);
+      forward.y = 0;
+      forward.normalize();
+      const right = new THREE.Vector3().crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize();
+      const delta = new THREE.Vector3();
+
+      if (keys.KeyW) delta.add(forward);
+      if (keys.KeyS) delta.sub(forward);
+      if (keys.KeyD) delta.add(right);
+      if (keys.KeyA) delta.sub(right);
+
+      if (delta.lengthSq() > 0) {
+        delta.normalize().multiplyScalar(speed * dt);
+        const nextPosition = camera.position.clone().add(delta);
+        nextPosition.x = THREE.MathUtils.clamp(nextPosition.x, -13.2, 13.2);
+        nextPosition.z = THREE.MathUtils.clamp(nextPosition.z, -72, 72);
+        const blocked = obstacles.some(obstacle =>
+          nextPosition.x >= obstacle.xMin &&
+          nextPosition.x <= obstacle.xMax &&
+          nextPosition.z >= obstacle.zMin &&
+          nextPosition.z <= obstacle.zMax
+        );
+        if (!blocked) {
+          camera.position.copy(nextPosition);
+        }
+        camera.position.y = 1.6;
+      }
+    }
+
+    function updateCameraRotation() {
+      camera.rotation.order = "YXZ";
+      camera.rotation.y = yaw;
+      camera.rotation.x = pitch;
+    }
+
+    function tryButtonInteraction() {
+      raycaster.setFromCamera(pointer, camera);
+      const hits = raycaster.intersectObjects(buttons, false);
+      const closeHit = hits.find(hit => hit.distance < 3.1);
+      if (closeHit) {
+        pressSignalButton();
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const dt = Math.min(clock.getDelta(), 0.05);
+      const now = performance.now() / 1000;
+
+      updateSignal(dt);
+      movePlayer(dt, now);
+      updateVision();
+      updateCars(dt, now);
+      checkRedLightCrossing();
+      updateGoal();
+
+      if (warningTimer > 0) {
+        warningTimer -= dt;
+        if (warningTimer <= 0) warning.style.opacity = 0;
+      }
+
+      const buttonNear = buttons.some(button => button.getWorldPosition(new THREE.Vector3()).distanceTo(camera.position) < 3.2);
+      if (buttonNear && !showSignalColors) {
+        hudButton.textContent = "버튼: 조준 후 클릭 또는 E";
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    addLights();
+    addRoad();
+    addTactileBlocks();
+    addBuildingsAndTrees();
+    addCane();
+    createCar(-6.75, 15, 0x8f2f38);
+    createCar(6.72, -31, 0x365d91);
+    if (previewMode) {
+      start.style.display = "none";
+    }
+    updateTrafficLights();
+    animate();
+
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    document.addEventListener("keydown", event => {
+      keys[event.code] = true;
+      if (event.code === "KeyE") tryButtonInteraction();
+    });
+
+    document.addEventListener("keyup", event => {
+      keys[event.code] = false;
+    });
+
+    document.addEventListener("mousemove", event => {
+      if (document.pointerLockElement !== renderer.domElement) return;
+      yaw -= event.movementX * 0.0022;
+      pitch -= event.movementY * 0.0022;
+      pitch = THREE.MathUtils.clamp(pitch, -1.25, 1.25);
+      updateCameraRotation();
+    });
+
+    document.addEventListener("click", () => {
+      if (gameOver || gameClear) return;
+      if (document.pointerLockElement !== renderer.domElement) {
+        renderer.domElement.requestPointerLock();
+        return;
+      }
+      tryButtonInteraction();
+    });
+
+    start.addEventListener("click", () => {
+      renderer.domElement.requestPointerLock();
+    });
+
+    restartButton.addEventListener("click", event => {
+      event.stopPropagation();
+      window.location.reload();
+    });
+
+    document.addEventListener("pointerlockchange", () => {
+      start.style.display = document.pointerLockElement === renderer.domElement || gameOver || gameClear ? "none" : "grid";
+    });
+  </script>
 </body>
 </html>
